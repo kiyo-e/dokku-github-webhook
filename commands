@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -eo pipefail
+export DOKKU_ROOT=${DOKKU_ROOT:="/home/dokku"}
+export PLUGIN_PATH=${PLUGIN_PATH:="/var/lib/dokku/plugins"}
+. /var/lib/dokku/plugins/git/commands
+
+APP=$2
+REF=$3
+URL=$4
+
+case "$1" in
+  webhook)
+    branch=`echo $REF|sed -e 's|^refs/heads/||' -e 's|/|-|g'`
+    APP="$APP-${branch}"
+    APP_PATH="$DOKKU_ROOT/$APP"
+
+    if [[ ! -d "$APP_PATH/refs" ]]; then
+        git clone --bare $URL $APP_PATH > /dev/null
+        git --git-dir=$APP_PATH symbolic-ref HEAD $REF
+        PRERECEIVE_HOOK="$APP_PATH/hooks/pre-receive"
+        cat > $PRERECEIVE_HOOK <<EOF
+#!/usr/bin/env bash
+set -e; set -o pipefail;
+cat | DOKKU_ROOT="$DOKKU_ROOT" dokku git-hook $APP
+EOF
+        chmod +x $PRERECEIVE_HOOK
+    fi
+
+    git --git-dir=$APP_PATH fetch origin $REF:$REF
+    git --git-dir=$APP_PATH rev-parse HEAD | git_archive_all $APP | dokku receive $APP | sed -u "s/^/"$'\e[1G'"/"
+esac
