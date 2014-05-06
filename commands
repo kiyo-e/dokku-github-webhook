@@ -11,9 +11,11 @@ URL=$4
 case "$1" in
   webhook)
     branch=`echo $REF|sed -e 's|^refs/heads/||' -e 's|/|-|g'`
-    APP="$APP-${branch}"
+    BRANCH_APP="$APP-${branch}"
     APP_PATH="$DOKKU_ROOT/$APP"
+    BRANCH_APP_PATH="$DOKKU_ROOT/$BRANCH_APP"
 
+    # for master branch
     if [[ ! -d "$APP_PATH/refs" ]]; then
         git clone --bare $URL $APP_PATH > /dev/null
         git --git-dir=$APP_PATH symbolic-ref HEAD $REF
@@ -24,6 +26,20 @@ set -e; set -o pipefail;
 cat | DOKKU_ROOT="$DOKKU_ROOT" dokku git-hook $APP
 EOF
         chmod +x $PRERECEIVE_HOOK
+    fi
+
+    # for current branch
+    if [[ ! "${branch}" == "master" ]]; then
+      if [[ ! -d "$BRANCH_APP_PATH/refs" ]]; then
+          declare -a array=("branches" "config" "description" "hooks" "info" "objects" "refs")
+          mkdir $BRANCH_APP_PATH
+          for ((i = 0; i < ${#array[@]}; i++)) {
+            ln -s $APP_PATH/${array[i]} $BRANCH_APP_PATH/${array[i]}
+          }
+          echo "ref: $REF" > $BRANCH_APP_PATH/HEAD
+      fi
+      APP_PATH=$BRANCH_APP_PATH
+      APP=$BRANCH_APP
     fi
 
     git --git-dir=$APP_PATH fetch origin $REF:$REF
