@@ -18,7 +18,6 @@ case "$1" in
     # for master branch
     if [[ ! -d "$APP_PATH/refs" ]]; then
         git clone --bare $URL $APP_PATH > /dev/null
-        git --git-dir=$APP_PATH symbolic-ref HEAD $REF
         PRERECEIVE_HOOK="$APP_PATH/hooks/pre-receive"
         cat > $PRERECEIVE_HOOK <<EOF
 #!/usr/bin/env bash
@@ -37,6 +36,7 @@ EOF
             ln -s $APP_PATH/${array[i]} $BRANCH_APP_PATH/${array[i]}
           }
           echo "ref: $REF" > $BRANCH_APP_PATH/HEAD
+          git --git-dir=$BRANCH_APP_PATH symbolic-ref HEAD $REF
       fi
       APP_PATH=$BRANCH_APP_PATH
       APP=$BRANCH_APP
