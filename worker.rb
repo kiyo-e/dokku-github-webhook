@@ -10,8 +10,20 @@ set :port, 9292
 
 post "/" do
   params = JSON.parse( request.body.read )
-  app = params["repository"]["name"]
-  url = params["repository"]["url"]
-  ref = params["ref"]
-  system("#{COMMAND_SCRIPT} webhook #{app} #{ref} #{url}")
+
+  if params["pull_request"]
+    @app = params["pull_request"]["head"]["repo"]["name"]
+    @url = params["pull_request"]["head"]["repo"]["ssh_url"]
+    @ref = "refs/heads/" + params["pull_request"]["head"]["ref"]
+  else
+    @app = params["repository"]["name"]
+    @url = params["repository"]["ssh_url"]
+    @ref = params["ref"]
+  end
+
+  if params["action"] == "closed" or params["deleted"] == "false"
+    system("dokku delete #{@app}")
+  else
+    system("#{COMMAND_SCRIPT} webhook #{@app} #{@ref} #{@url}")
+  end
 end
