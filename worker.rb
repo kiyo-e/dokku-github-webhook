@@ -22,7 +22,7 @@ post "/" do
   end
 
 
-  if params["action"] == "closed" or params["deleted"] == "false"
+  if params["action"] == "closed" or params["deleted"] == "true"
     system("#{COMMAND_SCRIPT} delete #{@app} #{@ref} #{@url}")
   else
     system("#{COMMAND_SCRIPT} webhook #{@app} #{@ref} #{@url}")
