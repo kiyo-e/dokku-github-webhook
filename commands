@@ -8,13 +8,13 @@ APP=$2
 REF=$3
 URL=$4
 
+branch=`echo $REF|sed -e 's|^refs/heads/||' -e 's|/|-|g'`
+BRANCH_APP="$APP-${branch}"
+APP_PATH="$DOKKU_ROOT/$APP"
+BRANCH_APP_PATH="$DOKKU_ROOT/$BRANCH_APP"
+
 case "$1" in
   webhook)
-    branch=`echo $REF|sed -e 's|^refs/heads/||' -e 's|/|-|g'`
-    BRANCH_APP="$APP-${branch}"
-    APP_PATH="$DOKKU_ROOT/$APP"
-    BRANCH_APP_PATH="$DOKKU_ROOT/$BRANCH_APP"
-
     # for master branch
     if [[ ! -d "$APP_PATH/refs" ]]; then
         git clone --bare $URL $APP_PATH > /dev/null
@@ -43,5 +43,12 @@ EOF
     fi
 
     git --git-dir=$APP_PATH fetch origin $REF:$REF
-    git --git-dir=$APP_PATH rev-parse HEAD | git_archive_all $APP | dokku receive $APP | sed -u "s/^/"$'\e[1G'"/"
+    git --git-dir=$APP_PATH rev-parse HEAD | git_archive_all $APP | dokku receive $APP | sed -u "s/^/"$'\e[1G'"/";;
+
+  delete)
+    if [[ ! "${branch}" == "master" ]]; then
+      APP=$BRANCH_APP
+    fi
+    echo $APP
+    dokku delete $APP;;
 esac

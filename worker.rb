@@ -21,8 +21,9 @@ post "/" do
     @ref = params["ref"]
   end
 
+
   if params["action"] == "closed" or params["deleted"] == "false"
-    system("dokku delete #{@app}")
+    system("#{COMMAND_SCRIPT} delete #{@app} #{@ref} #{@url}")
   else
     system("#{COMMAND_SCRIPT} webhook #{@app} #{@ref} #{@url}")
   end
