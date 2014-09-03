@@ -25,3 +25,8 @@ push or Pull Request event
 cd /home/dokku/dokku-github-webhook
 sudo ./bootstrap.sh
 ```
+
+
+### etc.
+if you need default env(RAILS_ENV or DATABASE_URL), you use [dokku-default-env plugin](https://github.com/kiyo-e/dokku-default-env).
+
