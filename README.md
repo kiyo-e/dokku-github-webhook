@@ -16,8 +16,10 @@ cd dokku-github-webhook
 ```
 
 ### Setting
-fix servername on nginx.conf
-
+fix servername on nginx.conf  
+set github webhook to servername  
+push or Pull Request event  
+ 
 ### Run
 ```
 cd /home/dokku/dokku-github-webhook
