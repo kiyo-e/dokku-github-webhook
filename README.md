@@ -16,6 +16,7 @@ cd dokku-github-webhook
 ```
 
 ### Setting
+You should be enable pull from github.
 fix servername on nginx.conf  
 set github webhook to servername  
 push or Pull Request event  
