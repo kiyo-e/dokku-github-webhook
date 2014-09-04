@@ -29,5 +29,5 @@ sudo ./bootstrap.sh
 
 
 ### etc.
-if you need default env(RAILS_ENV or DATABASE_URL), you use [dokku-default-env plugin](https://github.com/kiyo-e/dokku-default-env).
+if you need default env(RAILS_ENV or DATABASE_URL, etc...), you use [dokku-default-env plugin](https://github.com/kiyo-e/dokku-default-env).
 
