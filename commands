@@ -21,6 +21,8 @@ git_archive_all() {
 }
 
 
+
+
 APP=$2
 REF=$3
 URL=$4
@@ -29,7 +31,6 @@ branch=`echo $REF|sed -e 's|^refs/heads/||' -e 's|/|-|g'`
 BRANCH_APP="$APP-${branch}"
 APP_PATH="$DOKKU_ROOT/$APP"
 BRANCH_APP_PATH="$DOKKU_ROOT/$BRANCH_APP"
-
 
 case "$1" in
   webhook)
