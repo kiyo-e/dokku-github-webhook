@@ -30,38 +30,38 @@ BRANCH_APP="$APP-${branch}"
 APP_PATH="$DOKKU_ROOT/$APP"
 BRANCH_APP_PATH="$DOKKU_ROOT/$BRANCH_APP"
 
+
 case "$1" in
   webhook)
     # for master branch
     if [[ ! -d "$APP_PATH/refs" ]]; then
-      git clone --bare $URL $APP_PATH > /dev/null
-      PRERECEIVE_HOOK="$APP_PATH/hooks/pre-receive"
-      cat > $PRERECEIVE_HOOK <<EOF
-      #!/usr/bin/env bash
-      set -e; set -o pipefail;
-      cat | DOKKU_ROOT="$DOKKU_ROOT" dokku git-hook $APP
-      EOF
-      chmod +x $PRERECEIVE_HOOK
+        git clone --bare $URL $APP_PATH > /dev/null
+        PRERECEIVE_HOOK="$APP_PATH/hooks/pre-receive"
+        cat > $PRERECEIVE_HOOK <<EOF
+#!/usr/bin/env bash
+set -e; set -o pipefail;
+cat | DOKKU_ROOT="$DOKKU_ROOT" dokku git-hook $APP
+EOF
+        chmod +x $PRERECEIVE_HOOK
     fi
 
     # for current branch
     if [[ ! "${branch}" == "master" ]]; then
       if [[ ! -d "$BRANCH_APP_PATH/refs" ]]; then
-        declare -a array=("branches" "config" "description" "hooks" "info" "objects" "refs")
-        mkdir $BRANCH_APP_PATH
-        for ((i = 0; i < ${#array[@]}; i++)) {
-          ln -s $APP_PATH/${array[i]} $BRANCH_APP_PATH/${array[i]}
-        }
-        echo "ref: $REF" > $BRANCH_APP_PATH/HEAD
-        git --git-dir=$BRANCH_APP_PATH symbolic-ref HEAD $REF
+          declare -a array=("branches" "config" "description" "hooks" "info" "objects" "refs")
+          mkdir $BRANCH_APP_PATH
+          for ((i = 0; i < ${#array[@]}; i++)) {
+            ln -s $APP_PATH/${array[i]} $BRANCH_APP_PATH/${array[i]}
+          }
+          echo "ref: $REF" > $BRANCH_APP_PATH/HEAD
+          git --git-dir=$BRANCH_APP_PATH symbolic-ref HEAD $REF
       fi
       APP_PATH=$BRANCH_APP_PATH
       APP=$BRANCH_APP
     fi
 
     git --git-dir=$APP_PATH fetch origin $REF:$REF
-    git --git-dir=$APP_PATH rev-parse HEAD | git_archive_all $APP | dokku
-    receive $APP buildstep | sed -u "s/^/"$'\e[1G'"/";;
+    git --git-dir=$APP_PATH rev-parse HEAD | git_archive_all $APP | dokku receive $APP buildstep | sed -u "s/^/"$'\e[1G'"/";;
 
   delete)
     if [[ ! "${branch}" == "master" ]]; then
