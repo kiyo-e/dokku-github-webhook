@@ -16,6 +16,7 @@ cd dokku-github-webhook
 ```
 
 ### Setting
+You should be enable pull from github.
 fix servername on nginx.conf  
 set github webhook to servername  
 push or Pull Request event  
@@ -28,5 +29,5 @@ sudo ./bootstrap.sh
 
 
 ### etc.
-if you need default env(RAILS_ENV or DATABASE_URL), you use [dokku-default-env plugin](https://github.com/kiyo-e/dokku-default-env).
+if you need default env(RAILS_ENV or DATABASE_URL, etc...), you use [dokku-default-env plugin](https://github.com/kiyo-e/dokku-default-env).
 
