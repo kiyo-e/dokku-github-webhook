@@ -14,7 +14,8 @@ class MyApp < Sinatra::Base
   set :port, 9292
 
   get "/" do
-    erb "現在処理中のジョブ：#{@@current_job} <br> 処理待ち：#{@@jobs}"
+    tasks = @@jobs.map {|x| x[:app]}
+    erb "現在処理中のジョブ：#{@@current_job} <br> 処理待ち：#{tasks}"
   end
 
   post "/" do
@@ -36,7 +37,7 @@ class MyApp < Sinatra::Base
                 "#{COMMAND_SCRIPT} webhook #{@app} #{@ref} #{@url}"
               end
 
-    @@jobs.push({ :command => command, :app => @app })
+    @@jobs.push({ :command => command, :app => @url })
     status 200 && return
   end
 
