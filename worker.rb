@@ -4,12 +4,17 @@ require 'json'
 require 'eventmachine'
 class MyApp < Sinatra::Base
   @@jobs = []
+  @@current_job = ""
 
   dir = File.dirname(__FILE__)
   COMMAND_SCRIPT = "#{dir}/commands"
 
   set :environment, :production
   set :port, 9292
+
+  get "/" do
+    erb "現在処理中のジョブ：#{@@current_job} <br> 処理待ち：#{@@jobs}"
+  end
 
   post "/" do
     params = JSON.parse( request.body.read )
@@ -30,7 +35,7 @@ class MyApp < Sinatra::Base
                 "#{COMMAND_SCRIPT} webhook #{@app} #{@ref} #{@url}"
               end
 
-    @@jobs.push command
+    @@jobs.push({ :command => command, :app => @app })
     status 200 && return
   end
 
@@ -40,7 +45,9 @@ class MyApp < Sinatra::Base
       next if @@jobs.empty?
       job = @@jobs.shift ## ジョブ1つ取り出す
       ## job処理する
-      system(job)
+      @@current_job = job[:app]
+      system(job[:command])
+      @@current_job = nil
     end
   end
 
