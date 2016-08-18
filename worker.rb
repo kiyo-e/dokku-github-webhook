@@ -26,7 +26,7 @@ class MyApp < Sinatra::Base
 
     command = if params["action"] == "closed" or params["deleted"] == "true"
                 "#{COMMAND_SCRIPT} delete #{@app} #{@ref} #{@url}"
-              elsif %w( opened reopened synchronized  ).include?(params["action"])
+              elsif %w( opened reopened synchronize ).include?(params["action"])
                 "#{COMMAND_SCRIPT} webhook #{@app} #{@ref} #{@url}"
               end
 
