@@ -38,6 +38,7 @@ class MyApp < Sinatra::Base
               end
 
     @@jobs.push({ :command => command, :app => @ref.sub(/refs\/heads\//, "") })
+    @@jobs.uniq!
     status 200 && return
   end
 
