@@ -3,6 +3,10 @@ set -eo pipefail
 export DOKKU_ROOT=${DOKKU_ROOT:="/home/dokku"}
 export PLUGIN_PATH=${PLUGIN_PATH:="/var/lib/dokku/plugins"}
 
+LOGFILE=/tmp/script-log
+
+exec 1> >(cat >> $LOGFILE)
+exec 2> >(cat >> $LOGFILE)
 
 git_archive_all() {
   APP=$1; REV=$2
