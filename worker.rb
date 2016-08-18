@@ -21,10 +21,9 @@ post "/" do
     @ref = params["ref"]
   end
 
-
   if params["action"] == "closed" or params["deleted"] == "true"
     system("#{COMMAND_SCRIPT} delete #{@app} #{@ref} #{@url}")
-  else
+  elsif %w( opened reopened synchronized  ).include?(params["action"])
     system("#{COMMAND_SCRIPT} webhook #{@app} #{@ref} #{@url}")
   end
 end
