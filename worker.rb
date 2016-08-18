@@ -37,7 +37,7 @@ class MyApp < Sinatra::Base
                 "#{COMMAND_SCRIPT} webhook #{@app} #{@ref} #{@url}"
               end
 
-    @@jobs.push({ :command => command, :app => @ref })
+    @@jobs.push({ :command => command, :app => @ref.sub(/refs\/heads\//, "") })
     status 200 && return
   end
 
