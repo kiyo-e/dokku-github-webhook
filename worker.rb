@@ -37,7 +37,7 @@ class MyApp < Sinatra::Base
                 "#{COMMAND_SCRIPT} webhook #{@app} #{@ref} #{@url}"
               end
 
-    @@jobs.push({ :command => command, :app => @url })
+    @@jobs.push({ :command => command, :app => @ref })
     status 200 && return
   end
 
