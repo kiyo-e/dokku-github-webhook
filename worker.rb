@@ -14,6 +14,13 @@ class MyApp < Sinatra::Base
 
   set :environment, :production
   set :port, 9292
+  
+  configure do
+    enable :logging
+    file = File.new("#{settings.root}/log/#{settings.environment}.log", 'a+')
+    file.sync = true
+    use Rack::CommonLogger, file
+  end
 
   get "/" do
     tasks = @@jobs.map {|x| x[:app]}
@@ -21,8 +28,6 @@ class MyApp < Sinatra::Base
   end
 
   post "/" do
-    logger = Logger.new('sinatra.log')
-
     params = JSON.parse( request.body.read )
 
     logger.info params
