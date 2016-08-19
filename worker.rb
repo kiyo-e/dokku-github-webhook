@@ -14,7 +14,7 @@ class MyApp < Sinatra::Base
 
   set :environment, :production
   set :port, 9292
-  
+
   configure do
     enable :logging
     file = File.new("#{settings.root}/log/#{settings.environment}.log", 'a+')
@@ -48,7 +48,7 @@ class MyApp < Sinatra::Base
                 "#{COMMAND_SCRIPT} webhook #{@app} #{@ref} #{@url}"
               end
 
-    @@jobs.push({ :command => command, :app => @ref.sub(/refs\/heads\//, "") })
+    @@jobs.push({ :command => command, :app => @ref.sub(/refs\/heads\//, "") }) unless command.nil?
     @@jobs.uniq!
     logger.info @@jobs.to_s
 
