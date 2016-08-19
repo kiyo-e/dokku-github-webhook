@@ -30,7 +30,7 @@ class MyApp < Sinatra::Base
   post "/" do
     params = JSON.parse( request.body.read )
 
-    logger.info params
+    logger.info params.to_s
 
     if params["pull_request"]
       @app = params["pull_request"]["head"]["repo"]["name"]
@@ -50,7 +50,7 @@ class MyApp < Sinatra::Base
 
     @@jobs.push({ :command => command, :app => @ref.sub(/refs\/heads\//, "") })
     @@jobs.uniq!
-    logger.info @@jobs
+    logger.info @@jobs.to_s
 
     status 200 && return
   end
