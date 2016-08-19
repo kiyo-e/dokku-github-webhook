@@ -48,9 +48,12 @@ class MyApp < Sinatra::Base
       next if @@jobs.empty?
       job = @@jobs.shift ## ジョブ1つ取り出す
       ## job処理する
-      @@current_job = job[:app]
-      system(job[:command])
-      @@current_job = nil
+      begin
+        @@current_job = job[:app]
+        system(job[:command])
+      ensure
+          @@current_job = nil
+      end
     end
   end
 
