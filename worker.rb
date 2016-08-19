@@ -3,6 +3,8 @@
 require 'sinatra'
 require 'json'
 require 'eventmachine'
+require 'logger'
+
 class MyApp < Sinatra::Base
   @@jobs = []
   @@current_job = ""
@@ -19,7 +21,11 @@ class MyApp < Sinatra::Base
   end
 
   post "/" do
+    logger = Logger.new('sinatra.log')
+
     params = JSON.parse( request.body.read )
+
+    logger.info params
 
     if params["pull_request"]
       @app = params["pull_request"]["head"]["repo"]["name"]
@@ -39,6 +45,8 @@ class MyApp < Sinatra::Base
 
     @@jobs.push({ :command => command, :app => @ref.sub(/refs\/heads\//, "") })
     @@jobs.uniq!
+    logger.info @@jobs
+
     status 200 && return
   end
 
